@@ -9,6 +9,7 @@ from datetime import datetime
 from pytz import timezone
 import pytz
 
+
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -38,6 +39,37 @@ def get_dynamic_greeting():
     else:
         return f"Good Night 🌙 - {formatted_time} (BTT)"
 
+# Function to perform OCR (optional to update if Tesseract or another is used)
+def ocr_image(image):
+    try:
+        # Here you would use Tesseract or any other OCR library you're using
+        # For now, this is a placeholder.
+        text = "Extracted text from image"
+        return text
+    except Exception as e:
+        logger.error(f"Error in OCR: {e}")
+        return None
+
+# Function to transcribe audio/video to text using Faster Whisper
+def transcribe_audio_or_video(audio_file_path):
+    model = WhisperModel('tiny', device='cpu', compute_type='int8')  # Adjust based on your model
+    result = model.transcribe(audio_file_path)
+    
+    # Return the transcribed text
+    return result["text"]
+
+# Function to handle homework based on type (image, audio, voice, video)
+def handle_homework(file, file_type):
+    # Check file type and perform relevant action
+    if file_type == "image":
+        text = ocr_image(file)
+        return text
+    elif file_type == "audio" or file_type == "video":
+        transcribed_text = transcribe_audio_or_video(file)
+        return transcribed_text
+    else:
+        return None
+
 # Function to create a log of messages
 def log_message(message, message_type="text"):
     try:
@@ -45,32 +77,6 @@ def log_message(message, message_type="text"):
         logger.info(f"Message logged at {timestamp}: {message[:50]}... ({message_type})")  # Only show first 50 chars
     except Exception as e:
         logger.error(f"Error logging message: {e}")
-
-# Lazy-loaded transcriber
-transcriber_model = None
-
-def warmup_transcriber():
-    global transcriber_model
-    if transcriber_model is None:
-        logger.info("Loading Faster-Whisper model...")
-        transcriber_model = WhisperModel("tiny", compute_type="int8")
-
-def get_bot_info():
-    """
-    Returns bot version and time.
-    """
-    bot_version = "1.0.0"  # This should be your actual version or dynamic retrieval
-    bt_time = datetime.now(pytz.timezone("Asia/Thimphu")).strftime("%Y-%m-%d %H:%M:%S")
-    return bot_version, bt_time
-    
-async def transcribe_audio(file_path: str) -> str:
-    warmup_transcriber()
-    segments, _ = transcriber_model.transcribe(file_path)
-    return " ".join([segment.text for segment in segments])
-
-def extract_text_from_image(image_bytes: bytes) -> str:
-    image = Image.open(io.BytesIO(image_bytes))
-    return pytesseract.image_to_string(image)
 
 def is_homework_text(text: str) -> bool:
     keywords = ["homework", "hw", "assignment", "classwork"]
