@@ -6,8 +6,8 @@ from PIL import Image
 from faster_whisper import WhisperModel
 import time
 from datetime import datetime
-from pytz import timezone
 import pytz
+from pytz import timezone
 
 
 # Set up logging
