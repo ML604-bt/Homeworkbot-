@@ -1,23 +1,29 @@
-# Use an official Python runtime as a parent image
+# Use a minimal Python image
 FROM python:3.9-slim
 
-# Set the working directory in the container
+# Set the working directory
 WORKDIR /app
 
-# Copy the requirements.txt first and install dependencies
-COPY requirements.txt /app/
+# Install system dependencies for OCR and audio/video
+RUN apt-get update && apt-get install -y \
+    tesseract-ocr \
+    ffmpeg \
+    libsm6 \
+    libxext6 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install pip dependencies
+# Copy and install Python dependencies
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of your application code (main.py, handlers.py, utils.py, etc.)
-COPY . /app/
+# Copy your bot code
+COPY . .
 
-# Expose port (optional for webhooks, if needed)
+# Expose the port that aiohttp will listen on
 EXPOSE 5000
 
-# Set environment variables (optional, if needed for your bot)
-ENV FLASK_APP=main.py
+# Set environment variables (optional)
+ENV PYTHONUNBUFFERED=1
 
-# Run the bot when the container starts
+# Run your bot using aiohttp's built-in web server
 CMD ["python", "main.py"]
