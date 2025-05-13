@@ -16,6 +16,14 @@ def warmup_transcriber():
         logger.info("Loading Faster-Whisper model...")
         transcriber_model = WhisperModel("tiny", compute_type="int8")
 
+def get_bot_info():
+    """
+    Returns bot version and time.
+    """
+    bot_version = "1.0.0"  # This should be your actual version or dynamic retrieval
+    bt_time = datetime.now(pytz.timezone("Asia/Thimphu")).strftime("%Y-%m-%d %H:%M:%S")
+    return bot_version, bt_time
+    
 async def transcribe_audio(file_path: str) -> str:
     warmup_transcriber()
     segments, _ = transcriber_model.transcribe(file_path)
