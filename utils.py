@@ -21,6 +21,13 @@ def load_model():
     if model is None:
         model = WhisperModel("tiny", compute_type="int8")
 
+def get_bot_info():
+    bot_token = os.getenv("BOT_TOKEN")
+    chat_id = os.getenv("CHAT_ID")
+    admin_chat_ids = os.getenv("ADMIN_CHAT_IDS", "").split(",")
+    routes_map = os.getenv("ROUTES_MAP", "").split(",")
+    return bot_token, chat_id, admin_chat_ids, routes_map
+
 # Dynamic greeting for Bhutan timezone
 def get_dynamic_greeting():
     bhutan_tz = pytz.timezone("Asia/Thimphu")
