@@ -37,6 +37,16 @@ def get_dynamic_greeting():
     else:
         return f"Good Night 🌙 - {formatted_time} (BTT)"
 
+def get_bot_info():
+    from os import getenv
+
+    bot_token = getenv("BOT_TOKEN")
+    chat_id = getenv("CHAT_ID")
+    admin_chat_ids = getenv("ADMIN_CHAT_IDS", "").split(",")
+    routes_map = getenv("ROUTES_MAP", "").split(",")
+
+    return bot_token, chat_id, admin_chat_ids, routes_map
+
 # OCR for image-based homework
 def extract_text_from_image(image_bytes: bytes) -> str:
     try:
