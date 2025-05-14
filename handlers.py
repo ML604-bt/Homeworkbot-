@@ -8,6 +8,7 @@ from utils import extract_text_from_image, transcribe_audio, is_homework_text
 logger = logging.getLogger(__name__)
 
 async def handle_homework(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    logger.info("📩 Received message in handle_homework()")
     if update.effective_chat is None:
         return
 
