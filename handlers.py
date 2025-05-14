@@ -53,5 +53,5 @@ async def handle_homework(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Export handler for main.py
 handle_homework = MessageHandler(
-    filters.PHOTO | filters.VOICE | filters.AUDIO | filters.VIDEO, handle_homework
+    filters.TEXT | filters.PHOTO | filters.VOICE | filters.AUDIO | filters.VIDEO, handle_homework
           )
