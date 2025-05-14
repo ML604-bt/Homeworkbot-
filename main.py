@@ -8,7 +8,7 @@ from telegram.ext import (
     ApplicationBuilder, MessageHandler, filters
 )
 from handlers import handle_homework  # Import your custom handler function
-from utils import get_bot_info, get_dynamic_greeting
+from utils import get_bot_info, get_dynamic_greeting, load_config
 
 # --- Load Environment Variables ---
 load_dotenv()
