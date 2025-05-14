@@ -35,7 +35,7 @@ async def send_startup_message(app):
         f"✅ Online (v{bot_version})\n"
         f"🕒 Time: {bt_time} (BTT)\n"
         f"📬 Routes: {len(routes)} active\n"
-        f"🌐 Webhook: {WEBHOOK_URL}/{app.bot.token}"
+        f"🌐 Webhook: {WEBHOOK_URL}"
     )
     for admin_id in admins:
         try:
