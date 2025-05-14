@@ -42,9 +42,9 @@ def get_dynamic_greeting():
 
     if 0 <= hour < 12:
         return f"Good Morning 🌅 - {formatted_time} (BTT)"
-    elif 12 <= hour < 18:
+    elif 12 <= hour < 16:
         return f"Good Afternoon 🌞 - {formatted_time} (BTT)"
-    elif 18 <= hour < 22:
+    elif 16 <= hour < 19:
         return f"Good Evening 🌇 - {formatted_time} (BTT)"
     else:
         return f"Good Night 🌙 - {formatted_time} (BTT)"
