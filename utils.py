@@ -87,12 +87,17 @@ def extract_audio_from_video(video_path: str) -> str:
 
 # Detect homework-like text
 def is_homework_text(text: str) -> bool:
-     keywords = [
-        "homework", "hw", "assignment", "classwork", "project",
-        "math", "science", "english", "dzongkha", "geography", "history",
-        "page", "pg", "chapter", "exercise", "ex", "q", "question" ]
-    
-         return any(keyword in text.lower() for keyword in keywords)
+    keywords = [
+        "homework",
+        "hw",
+        "assignment",
+        "classwork",
+        "project",
+        "math",
+        "science"
+    ]
+    return any(keyword in text.lower() for keyword in keywords)
+
 
 
 
