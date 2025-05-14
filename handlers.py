@@ -23,17 +23,17 @@ async def handle_homework(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = ""
 
     try:
-        # Handle text messages
+        # ✅ Handle plain text messages
         if message.text:
             text = message.text
 
-        # Handle images/photos
+        # Handle images/photos (OCR)
         elif message.photo:
             photo = await message.photo[-1].get_file()
             file_bytes = await photo.download_as_bytearray()
             text = extract_text_from_image(file_bytes)
 
-        # Handle voice/audio/video
+        # Handle voice/audio/video (Transcription)
         elif message.voice or message.audio or message.video:
             file = await (message.voice or message.audio or message.video).get_file()
             with tempfile.NamedTemporaryFile(delete=False) as tf:
@@ -41,15 +41,15 @@ async def handle_homework(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 text = await transcribe_audio(tf.name)
                 os.unlink(tf.name)  # Clean up
 
-        # If we extracted/received text, check for homework-like content
+        # Check and forward if it's homework
         if text and is_homework_text(text):
             await message.copy(chat_id=target_chat_id)
             logger.info(f"✅ Forwarded homework from {source_chat_id} to {target_chat_id}")
         else:
-            logger.info(f"⚠️ Ignored — no homework detected in message from {source_chat_id}")
+            logger.info(f"❌ Ignored — No homework detected from {source_chat_id}")
 
     except Exception as e:
-        logger.warning(f"❌ Error processing message: {e}")
+        logger.warning(f"⚠️ Error processing message: {e}")
 
 # Export handler for main.py
 handle_homework = MessageHandler(
