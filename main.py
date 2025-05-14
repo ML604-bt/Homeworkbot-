@@ -43,14 +43,17 @@ async def send_startup_message(app):
         except Exception as e:
             logger.error(f"Failed to send startup message to {admin_id}: {e}")
 
-async def telegram_webhook(request):
-    try:
-        data = await request.json()
-        update = Update.de_json(data, application.bot)
-        await application.process_update(update)
-    except Exception as e:
-        logger.error(f"Webhook processing failed: {e}")
-    return web.Response()
+def create_telegram_webhook(app_instance):
+    async def telegram_webhook(request):
+        try:
+            data = await request.json()
+            update = Update.de_json(data, app_instance.bot)
+            await app_instance.process_update(update)
+        except Exception as e:
+            logger.error(f"Webhook processing failed: {e}")
+        return web.Response()
+    return telegram_webhook
+
 
 # --- Aiohttp Web App ---
 web_app = web.Application()
