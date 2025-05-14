@@ -25,6 +25,8 @@ def get_bot_info():
     bot_version = "1.0.0"
     bhutan_time = datetime.now(pytz.timezone("Asia/Thimphu")).strftime("%Y-%m-%d %I:%M %p")
     return bot_version, bhutan_time
+
+def load_config():
     bot_token = os.getenv("BOT_TOKEN")
     chat_id = os.getenv("CHAT_ID")
     admin_chat_ids = os.getenv("ADMIN_CHAT_IDS", "").split(",")
