@@ -26,7 +26,7 @@ application = None
 
 async def send_startup_message(app):
     bot_version, bt_time = get_bot_info()
-    greeting = get_dynamic_greeting()
+    greeting = get_dynamic_greeting().split(" -")[0]
     routes = app.bot_data.get("ROUTES_MAP", {})
     admins = app.bot_data.get("ADMIN_CHAT_IDS", [])
     message = (
