@@ -81,6 +81,10 @@ async def main():
         .token(bot_token)
         .build()
     )
+    
+    # After application = ApplicationBuilder().token(...).build()
+     web_app.router.add_post("/webhook", create_telegram_webhook(application))  # ✅ Route for Telegram
+     web_app.router.add_get("/", lambda request: web.Response(text="Bot is alive."))  # Optional health check
 
     # Inject bot_data
     application.bot_data["ROUTES_MAP"] = {
