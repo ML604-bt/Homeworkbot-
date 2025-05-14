@@ -94,5 +94,5 @@ def is_homework_text(text: str) -> bool:
     keywords = [
         "homework", "hw", "assignment", "classwork", "project",
         "math", "science", "english", "dzongkha", "geography", "history",
-        "page", "pg", "chapter", "exercise", "ex", "q", "question"
+        "page", "pg", "chapter", "exercise", "ex", "q", "question" ]
 
