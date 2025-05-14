@@ -22,20 +22,32 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# --- Parse Routes and Admin IDs from .env ---
-ROUTES_MAP = {}
-for pair in os.getenv("ROUTES_MAP", "").split(","):
-    try:
-        src, dst = map(int, pair.strip().split(":"))
-        ROUTES_MAP[src] = dst
-    except ValueError:
-        logger.warning(f"Invalid ROUTES_MAP pair: {pair}")
+async def main():
+    # Load bot info and env variables
+    bot_version, bt_time = get_bot_info()
+    bot_token, chat_id, admin_chat_ids, routes_map = load_config()
 
-ADMIN_CHAT_IDS = [
-    int(chat_id.strip())
-    for chat_id in os.getenv("ADMIN_CHAT_IDS", "").split(",")
-    if chat_id.strip().isdigit()
-]
+    # Print or log to check if values are correct (optional but helpful during debugging)
+    print("Bot Version:", bot_version)
+    print("Current Time in Bhutan:", bt_time)
+    print("Bot Token:", bot_token)
+    print("Admin Chat IDs:", admin_chat_ids)
+    print("Routes Map:", routes_map)
+
+    # Now you can safely use these values to build your app logic
+    application = (
+        ApplicationBuilder()
+        .token(bot_token)
+        .build()
+    )
+
+    application.bot_data["ADMIN_CHAT_IDS"] = [int(id.strip()) for id in admin_chat_ids if id.strip()]
+    application.bot_data["ROUTES_MAP"] = {
+        int(source.strip()): int(target.strip())
+        for pair in routes_map if ":" in pair
+        for source, target in [pair.split(":")]
+    }
+
 
 # --- Create Application ---
 application = ApplicationBuilder().token(BOT_TOKEN).build()
