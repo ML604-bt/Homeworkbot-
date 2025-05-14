@@ -95,7 +95,8 @@ async def main():
     ))
 
     # Add Telegram webhook endpoint
-    web_app.router.add_post(f"/{bot_token}", telegram_webhook)
+    web_app.router.add_post("/webhook", telegram_webhook)
+
 
     # Start web server
     runner = web.AppRunner(web_app)
