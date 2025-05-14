@@ -91,7 +91,8 @@ def is_homework_text(text: str) -> bool:
         "homework", "hw", "assignment", "classwork", "project",
         "math", "science", "english", "dzongkha", "geography", "history",
         "page", "pg", "chapter", "exercise", "ex", "q", "question" ]
-    return any(keyword in text.lower() for keyword in keywords)
+    
+         return any(keyword in text.lower() for keyword in keywords)
 
 
 
