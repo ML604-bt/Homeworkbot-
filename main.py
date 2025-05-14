@@ -96,7 +96,8 @@ async def main():
 
     # Add Telegram webhook endpoint
     web_app.router.add_post("/webhook", create_telegram_webhook(application))  # ✅ Route for Telegram
-
+    web_app.router.add_get("/", lambda request: web.Response(text="Bot is alive."))
+   
     # Start web server
     runner = web.AppRunner(web_app)
     await runner.setup()
