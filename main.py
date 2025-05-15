@@ -94,14 +94,11 @@ async def main():
     web_app.router.add_get("/", lambda req: web.Response(text="Bot is alive."))
 
     # Fix repeated startup message
-async def on_webapp_startup(app):
-    await send_startup_message(application)
+    async def on_webapp_startup(app):
+        await send_startup_message(application)
 
-web_app.on_startup.append(on_webapp_startup)
+    web_app.on_startup.append(on_webapp_startup)
 
-web_app.on_startup.append(on_webapp_startup)
-
-web_app.on_startup.append(on_webapp_startup)
     # Launch
     runner = web.AppRunner(web_app)
     await runner.setup()
