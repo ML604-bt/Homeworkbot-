@@ -65,7 +65,7 @@ def create_telegram_webhook(app_instance):
             await app_instance.process_update(update)
         except Exception as e:
             logger.error(f"Webhook processing failed: {e}")
-        return web.Response()
+        return web.Response(text="OK")  # ✅ Important: must return a valid HTTP response
 
     return telegram_webhook
 
