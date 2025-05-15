@@ -43,17 +43,20 @@ async def send_startup_message(app):
         f"🌐 Webhook: {webhook_url}"
     )
 
+    logger.info(f"Startup message:\n{message}")
+    logger.info(f"Sending to admins: {admins}")
+
     if not admins:
         logger.warning("No ADMIN_CHAT_IDS found in bot_data.")
         return
 
-    logger.info(f"Sending startup message to: {admins}")
     for admin_id in admins:
         try:
             await app.bot.send_message(chat_id=admin_id, text=message, parse_mode="HTML")
+            logger.info(f"✅ Startup message sent to {admin_id}")
         except Exception as e:
-            logger.error(f"Failed to send startup message to {admin_id}: {e}")
-
+            logger.error(f"❌ Failed to send startup message to {admin_id}: {e}")
+    
 def create_telegram_webhook(app_instance):
     async def telegram_webhook(request):
         try:
@@ -66,6 +69,7 @@ def create_telegram_webhook(app_instance):
 
     return telegram_webhook
 
+web_app.on_startup.append(on_startup)
 
 # --- Startup & Shutdown Hooks ---
 async def on_startup(app):
