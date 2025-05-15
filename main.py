@@ -28,18 +28,26 @@ web_app = web.Application()
 application = None  # Define globally so it can be accessed in webhooks
 
 async def send_startup_message(app):
+    greeting = get_dynamic_greeting()
     bot_version, bt_time = get_bot_info()
-    greeting = get_dynamic_greeting().split(" -")[0]
     routes = app.bot_data.get("ROUTES_MAP", {})
     admins = app.bot_data.get("ADMIN_CHAT_IDS", [])
+    webhook_url = os.getenv("WEBHOOK_URL", "Not set")
+
     message = (
         f"{greeting}\n"
         f"<b>Homework Forwarder Bot</b>\n"
         f"✅ Online (v{bot_version})\n"
         f"🕒 Time: {bt_time} (BTT)\n"
         f"📬 Routes: {len(routes)} active\n"
-        f"🌐 Webhook: {WEBHOOK_URL}"
+        f"🌐 Webhook: {webhook_url}"
     )
+
+    if not admins:
+        logger.warning("No ADMIN_CHAT_IDS found in bot_data.")
+        return
+
+    logger.info(f"Sending startup message to: {admins}")
     for admin_id in admins:
         try:
             await app.bot.send_message(chat_id=admin_id, text=message, parse_mode="HTML")
