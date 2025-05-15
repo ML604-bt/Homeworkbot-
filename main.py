@@ -78,6 +78,7 @@ async def main():
         .token(bot_token)
         .build()
     )
+    await application.initialize()
 
     # Inject bot_data
     application.bot_data["ROUTES_MAP"] = {
