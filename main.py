@@ -15,18 +15,15 @@ load_dotenv()
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 PORT = int(os.getenv("PORT", 8080))
 
-# --- Logging Setup ---
-logging.basicConfig(
-    format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO
-)
+# --- Logging ---
+logging.basicConfig(format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# --- Aiohttp Web App ---
+# --- Aiohttp App Setup ---
 web_app = web.Application()
+application = None  # Global app reference
 
-# --- Global application placeholder ---
-application = None  # Define globally so it can be accessed in webhooks
-
+# --- Send Startup Notification ---
 async def send_startup_message(app):
     greeting = get_dynamic_greeting()
     bot_version, bt_time = get_bot_info()
@@ -43,20 +40,14 @@ async def send_startup_message(app):
         f"🌐 Webhook: {webhook_url}"
     )
 
-    logger.info(f"Startup message:\n{message}")
-    logger.info(f"Sending to admins: {admins}")
-
-    if not admins:
-        logger.warning("No ADMIN_CHAT_IDS found in bot_data.")
-        return
-
     for admin_id in admins:
         try:
             await app.bot.send_message(chat_id=admin_id, text=message, parse_mode="HTML")
             logger.info(f"✅ Startup message sent to {admin_id}")
         except Exception as e:
             logger.error(f"❌ Failed to send startup message to {admin_id}: {e}")
-    
+
+# --- Telegram Webhook Handler ---
 def create_telegram_webhook(app_instance):
     async def telegram_webhook(request):
         try:
@@ -65,32 +56,24 @@ def create_telegram_webhook(app_instance):
             await app_instance.process_update(update)
         except Exception as e:
             logger.error(f"Webhook processing failed: {e}")
-        return web.Response(text="OK")  # ✅ Important: must return a valid HTTP response
-
+        return web.Response(text="OK")
     return telegram_webhook
 
-# --- Startup & Shutdown Hooks ---
+# --- Aiohttp Hooks ---
 async def on_startup(app):
     await send_startup_message(application)
 
 async def on_shutdown(app):
-    logger.info("Shutting down bot...")
+    logger.info("Shutting down...")
 
+# --- Main Entry Point ---
 async def main():
     global application
-    # Load bot info and .env values
-    bot_version, bt_time = get_bot_info()
-    bot_token, chat_id, admin_chat_ids, routes_map = load_config()
+    bot_token, _, admin_chat_ids, routes_map = load_config()
 
-    # Build Application with token
-    application = (
-        ApplicationBuilder()
-        .token(bot_token)
-        .build()
-    )
+    application = ApplicationBuilder().token(bot_token).build()
     await application.initialize()
 
-    # Inject bot_data
     application.bot_data["ROUTES_MAP"] = {
         int(source.strip()): int(target.strip())
         for pair in routes_map if ":" in pair
@@ -99,27 +82,24 @@ async def main():
     application.bot_data["ADMIN_CHAT_IDS"] = [int(id.strip()) for id in admin_chat_ids if id.strip()]
     application.bot_data["FORWARDED_LOGS"] = []
 
-    # Add handler
     application.add_handler(MessageHandler(
         filters.TEXT | filters.PHOTO | filters.VIDEO | filters.VOICE | filters.AUDIO,
         handle_homework
     ))
 
-       # Add Telegram webhook endpoint
-    web_app.router.add_post("/webhook", create_telegram_webhook(application))  # ✅ Route for Telegram
+    web_app.router.add_post("/webhook", create_telegram_webhook(application))
     web_app.router.add_get("/", lambda request: web.Response(text="Bot is alive."))
 
-    # ✅ REGISTER on_startup NOW (after `application` is built and assigned)
     web_app.on_startup.append(on_startup)
+    web_app.on_shutdown.append(on_shutdown)
 
-    # Start web server
     runner = web.AppRunner(web_app)
     await runner.setup()
     site = web.TCPSite(runner, "0.0.0.0", PORT)
     await site.start()
 
-    logger.info(f"Bot running at http://0.0.0.0:{PORT}")
+    logger.info(f"🚀 Bot running at http://0.0.0.0:{PORT}")
 
-# --- Run App ---
+# --- Run ---
 if __name__ == "__main__":
     asyncio.run(main())
