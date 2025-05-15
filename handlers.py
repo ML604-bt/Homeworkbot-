@@ -52,3 +52,9 @@ async def handle_homework(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     except Exception as e:
         logger.error(f"🔥 Error during message handling: {e}")
+
+def is_homework_text(text: str) -> bool:
+    if not text:
+        return False
+    keywords = ["homework", "hw", "assignment", "classwork", "project", "math", "science"]
+    return any(keyword in text.lower() for keyword in keywords)
