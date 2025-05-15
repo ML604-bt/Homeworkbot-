@@ -36,8 +36,10 @@ def load_config():
 # Dynamic greeting for Bhutan timezone
 def get_dynamic_greeting():
     BT = pytz.timezone("Asia/Thimphu")  # Bhutan Time (BTT)
-    hour = datetime.now(BT).hour
-    
+    now = datetime.now(BT)
+    hour = now.hour
+    formatted_time = now.strftime("%I:%M %p")  # e.g. 10:56 AM
+
     if 0 <= hour < 12:
         return f"Good Morning 🌅 - {formatted_time} (BTT)"
     elif 12 <= hour < 16:
