@@ -69,8 +69,6 @@ def create_telegram_webhook(app_instance):
 
     return telegram_webhook
 
-web_app.on_startup.append(on_startup)
-
 # --- Startup & Shutdown Hooks ---
 async def on_startup(app):
     await send_startup_message(application)
@@ -107,10 +105,13 @@ async def main():
         handle_homework
     ))
 
-    # Add Telegram webhook endpoint
+       # Add Telegram webhook endpoint
     web_app.router.add_post("/webhook", create_telegram_webhook(application))  # ✅ Route for Telegram
     web_app.router.add_get("/", lambda request: web.Response(text="Bot is alive."))
-   
+
+    # ✅ REGISTER on_startup NOW (after `application` is built and assigned)
+    web_app.on_startup.append(on_startup)
+
     # Start web server
     runner = web.AppRunner(web_app)
     await runner.setup()
@@ -118,9 +119,6 @@ async def main():
     await site.start()
 
     logger.info(f"Bot running at http://0.0.0.0:{PORT}")
-    while True:
-        await asyncio.sleep(3600)  # Keeps the bot alive
-
 
 # --- Run App ---
 if __name__ == "__main__":
