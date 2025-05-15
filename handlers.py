@@ -50,4 +50,4 @@ async def handle_homework(update: Update, context: ContextTypes.DEFAULT_TYPE):
             logger.info(f"⚠️ Ignored — not homework: {text}")
 
     except Exception as e:
-        logger.warning(f"Error in handle_homework: {e}")
+        print(f"🔥 Error in handle_homework: {e}")
