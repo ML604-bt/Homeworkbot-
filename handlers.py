@@ -27,6 +27,7 @@ async def handle_homework(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # TEXT
         if message.text:
             text = message.text
+            print(f"🧠 Extracted Text: {text}")
 
         # PHOTOS
         elif message.photo:
