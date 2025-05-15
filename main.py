@@ -100,6 +100,8 @@ async def on_webapp_startup(app):
 web_app.on_startup.append(on_webapp_startup)
 
 web_app.on_startup.append(on_webapp_startup)
+
+web_app.on_startup.append(on_webapp_startup)
     # Launch
     runner = web.AppRunner(web_app)
     await runner.setup()
